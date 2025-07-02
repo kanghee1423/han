@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오늘의 점심 메뉴 추천기</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input, button { padding: 10px; margin: 10px 0; width: 100%; font-size: 1em; }
+    .result { margin-top: 20px; font-weight: bold; font-size: 1.2em; color: #2e8b57; }
+  </style>
+</head>
+<body>
+  <h1>🍱 이름 + 날짜 기반 점심 메뉴 추천기</h1>
+  <input type="text" id="name" placeholder="이름을 입력하세요 (예: 김미정)">
+  <input type="date" id="date">
+  <button onclick="recommendMenu()">점심메뉴 추천받기</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    const menus = [
+      "김치찌개", "된장찌개", "비빔밥", "불고기", "삼겹살", "제육볶음",
+      "칼국수", "냉면", "순두부찌개", "김밥", "돈까스", "치킨",
+      "짬뽕", "짜장면", "떡볶이", "쌀국수", "우동", "라면", "햄버거",
+      "샌드위치", "회덮밥", "오므라이스", "초밥", "파스타", "덮밥류",
+      "찜닭", "육개장", "카레라이스", "부대찌개", "토스트"
+    ];
+
+    const 초성맵 = {
+      'ㄱ': 0, 'ㄴ': 1, 'ㄷ': 2, 'ㄹ': 3, 'ㅁ': 4,
+      'ㅂ': 5, 'ㅅ': 6, 'ㅇ': 7, 'ㅈ': 8, 'ㅊ': 9,
+      'ㅋ': 10, 'ㅌ': 11, 'ㅍ': 12, 'ㅎ': 13
+    };
+
+    const getCho = (char) => {
+      const cho = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+      const code = char.charCodeAt(0) - 44032;
+      if (code < 0 || code > 11171) return '';
+      return cho[Math.floor(code / 588)];
+    };
+
+    function recommendMenu() {
+      const name = document.getElementById("name").value.trim();
+      const dateStr = document.getElementById("date").value;
+
+      if (!name || !dateStr) {
+        document.getElementById("result").textContent = "이름과 날짜를 모두 입력해주세요.";
+        return;
+      }
+
+      const 초성 = getCho(name[0]);
+      const 성값 = 초성맵[초성] ?? 0;
+
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const 날짜합 = month + day;
+
+      const index = (성값 + 날짜합) % menus.length;
+      const menu = menus[index];
+
+      document.getElementById("result").textContent = `${name}님, ${month}월 ${day}일의 점심 메뉴는 👉 "${menu}" 입니다! 🍽`;
+    }
+  </script>
+</body>
+</html>
